@@ -1,0 +1,177 @@
+﻿19:47:38 - Build started.
+19:47:38 - Project "MoodleAzure_Cloud01_Bulid4.deployproj" (StageArtifacts target(s)):
+19:47:38 - Project "MoodleAzure_Cloud01_Bulid4.deployproj" (ContentFilesProjectOutputGroup target(s)):
+19:47:38 - Done building project "MoodleAzure_Cloud01_Bulid4.deployproj".
+19:47:38 - Done building project "MoodleAzure_Cloud01_Bulid4.deployproj".
+19:47:38 - Build succeeded.
+19:47:38 - The following parameter values will be used for this deployment:
+19:47:38 -     resourcesPrefix: azmoodclu
+19:47:38 -     vmSize: Standard_DS1_v2
+19:47:38 -     moodleVersion: MOODLE_30_STABLE
+19:47:38 -     adminUsername: azureadmin
+19:47:38 -     adminPassword: <securestring>
+19:47:38 -     mySQLuserPassword: <securestring>
+19:47:38 -     mySQLrootPassword: <securestring>
+19:47:38 - Launching deployment PowerShell script with the following command:
+19:47:38 - 'c:\users\fabio.vello\source\repos\moodleazure_itocre\moodleazure_cloud01_bulid4\Scripts\Deploy-AzureResourceGroup.ps1' -StorageAccountName '' -ResourceGroupName 'PRO-EAD-UNICASTELO' -ResourceGroupLocation 'brazilsouth' -TemplateFile 'c:\users\fabio.vello\source\repos\moodleazure_itocre\moodleazure_cloud01_bulid4\templates\linuxvirtualmachinescaleset.json' -TemplateParametersFile 'c:\users\fabio.vello\source\repos\moodleazure_itocre\moodleazure_cloud01_bulid4\templates\linuxvirtualmachinescaleset.parameters.json' -ArtifactStagingDirectory '..\bin\Debug\staging'
+19:47:39 - 
+19:47:39 - 
+19:47:39 - Environment           : AzureCloud
+19:47:39 - Account               : fabio.vello@itcore.com.br
+19:47:39 - TenantId              : f0ed7551-0c0d-456a-bd7d-c6ec5616b37b
+19:47:39 - SubscriptionId        : 40788d9e-7a91-44eb-95a2-c08261a4ff34
+19:47:39 - SubscriptionName      : Microsoft Azure Enterprise
+19:47:39 - CurrentStorageAccount : 
+19:47:39 - 
+19:47:39 - [VERBOSE] Realizando a operação "Replacing resource group ..." no destino "".
+19:47:39 - [VERBOSE] 19:47:39 - Created resource group 'PRO-EAD-UNICASTELO' in location 'brazilsouth'
+19:47:39 - 
+19:47:39 - ResourceGroupName : PRO-EAD-UNICASTELO
+19:47:39 - Location          : brazilsouth
+19:47:39 - ProvisioningState : Succeeded
+19:47:39 - Tags              : 
+19:47:39 - TagsTable         : 
+19:47:39 - ResourceId        : /subscriptions/40788d9e-7a91-44eb-95a2-c08261a4ff34/resourc
+19:47:39 -                     eGroups/PRO-EAD-UNICASTELO
+19:47:39 - 
+19:47:39 - [VERBOSE] Realizando a operação "Creating Deployment" no destino "PRO-EAD-UNICASTELO".
+19:47:41 - [VERBOSE] 19:47:41 - Template is valid.
+19:47:42 - [VERBOSE] 19:47:42 - Create template deployment 'linuxvirtualmachinescaleset-1014-2247'
+19:47:42 - [VERBOSE] 19:47:42 - Checking deployment status in 5 seconds
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa2' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa3' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'dbazmoodclusa1' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa4' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'gfsazmoodclusa0' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa0' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'dbazmoodclusa0' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'gfsazmoodclusa1' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa1' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Network/publicIPAddresses 'jb-azmoodclu' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Network/publicIPAddresses 'webpip' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Network/virtualNetworks 'azmoodcluvnet' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Compute/availabilitySets 'GfsAvSet' provisioning status is succeeded
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Network/networkSecurityGroups 'jboxNsg' provisioning status is running
+19:47:47 - [VERBOSE] 19:47:47 - Resource Microsoft.Compute/availabilitySets 'dbAvSet' provisioning status is succeeded
+19:47:47 - [VERBOSE] 19:47:47 - Checking deployment status in 10 seconds
+19:47:57 - [VERBOSE] 19:47:57 - Resource Microsoft.Storage/storageAccounts 'azmoodclusa5ppjp2ecoke3m' provisioning status is running
+19:47:57 - [VERBOSE] 19:47:57 - Checking deployment status in 15 seconds
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkInterfaces 'dbnic1' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkInterfaces 'dbnic0' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/loadBalancers 'mariadblb' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkInterfaces 'jboxnic' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkInterfaces 'gfsnic0' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkInterfaces 'gfsnic1' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/loadBalancers 'lbWeb' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/publicIPAddresses 'webpip' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa4' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Storage/storageAccounts 'gfsazmoodclusa0' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/publicIPAddresses 'jb-azmoodclu' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/publicIPAddresses 'webpip' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/virtualNetworks 'azmoodcluvnet' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Resource Microsoft.Network/networkSecurityGroups 'jboxNsg' provisioning status is succeeded
+19:48:12 - [VERBOSE] 19:48:12 - Checking deployment status in 20 seconds
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Compute/virtualMachines 'gfsazmoodcluvm1' provisioning status is running
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Compute/virtualMachines 'dbazmoodcluvm1' provisioning status is running
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'azmoodclusa5ppjp2ecoke3m' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Compute/virtualMachines 'gfsazmoodcluvm0' provisioning status is running
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Compute/virtualMachines 'dbazmoodcluvm0' provisioning status is running
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'azmoodclusa5ppjp2ecoke3m' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa2' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa3' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'dbazmoodclusa1' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa0' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'dbazmoodclusa0' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'gfsazmoodclusa1' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Resource Microsoft.Storage/storageAccounts 'vmssazmoodclusa1' provisioning status is succeeded
+19:48:32 - [VERBOSE] 19:48:32 - Checking deployment status in 25 seconds
+19:48:58 - [VERBOSE] 19:48:58 - Checking deployment status in 30 seconds
+19:49:28 - [VERBOSE] 19:49:28 - Checking deployment status in 35 seconds
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines/extensions 'gfsazmoodcluvm1/setupGluster' provisioning status is running
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines/extensions 'dbazmoodcluvm0/install_mariadb' provisioning status is running
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines/extensions 'dbazmoodcluvm1/install_mariadb' provisioning status is running
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines 'gfsazmoodcluvm1' provisioning status is succeeded
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines 'dbazmoodcluvm1' provisioning status is succeeded
+19:50:03 - [VERBOSE] 19:50:03 - Resource Microsoft.Compute/virtualMachines 'dbazmoodcluvm0' provisioning status is succeeded
+19:50:03 - [VERBOSE] 19:50:03 - Checking deployment status in 40 seconds
+19:50:43 - [VERBOSE] 19:50:43 - Resource Microsoft.Compute/virtualMachines/extensions 'gfsazmoodcluvm0/setupGluster' provisioning status is running
+19:50:43 - [VERBOSE] 19:50:43 - Resource Microsoft.Compute/virtualMachines 'gfsazmoodcluvm0' provisioning status is succeeded
+19:50:43 - [VERBOSE] 19:50:43 - Checking deployment status in 45 seconds
+19:51:28 - [VERBOSE] 19:51:28 - Checking deployment status in 50 seconds
+19:52:19 - [VERBOSE] 19:52:19 - Checking deployment status in 55 seconds
+19:53:14 - [VERBOSE] 19:53:14 - Resource Microsoft.Compute/virtualMachines 'jboxazmoodcluvm' provisioning status is running
+19:53:14 - [VERBOSE] 19:53:14 - Resource Microsoft.Compute/virtualMachines/extensions 'gfsazmoodcluvm0/setupGluster' provisioning status is succeeded
+19:53:14 - [VERBOSE] 19:53:14 - Checking deployment status in 60 seconds
+19:54:14 - [VERBOSE] 19:54:14 - Resource Microsoft.Compute/virtualMachines 'jboxazmoodcluvm' provisioning status is succeeded
+19:54:14 - [VERBOSE] 19:54:14 - Resource Microsoft.Compute/virtualMachines/extensions 'gfsazmoodcluvm1/setupGluster' provisioning status is succeeded
+19:54:14 - [VERBOSE] 19:54:14 - Resource Microsoft.Compute/virtualMachines/extensions 'dbazmoodcluvm1/install_mariadb' provisioning status is succeeded
+19:54:14 - [VERBOSE] 19:54:14 - Checking deployment status in 60 seconds
+19:55:14 - [VERBOSE] 19:55:14 - Resource Microsoft.Compute/virtualMachines/extensions 'jboxazmoodcluvm/install_moodle' provisioning status is running
+19:55:14 - [VERBOSE] 19:55:14 - Checking deployment status in 60 seconds
+19:56:14 - [VERBOSE] 19:56:14 - Checking deployment status in 60 seconds
+19:57:15 - [VERBOSE] 19:57:15 - Checking deployment status in 60 seconds
+19:58:15 - [VERBOSE] 19:58:15 - Checking deployment status in 60 seconds
+19:59:15 - [VERBOSE] 19:59:15 - Resource Microsoft.Compute/virtualMachines/extensions 'dbazmoodcluvm0/install_mariadb' provisioning status is succeeded
+19:59:15 - [VERBOSE] 19:59:15 - Checking deployment status in 60 seconds
+20:00:16 - [VERBOSE] 20:00:16 - Checking deployment status in 60 seconds
+20:01:16 - [VERBOSE] 20:01:16 - Checking deployment status in 60 seconds
+20:02:16 - [VERBOSE] 20:02:16 - Checking deployment status in 60 seconds
+20:03:16 - [VERBOSE] 20:03:16 - Checking deployment status in 60 seconds
+20:04:16 - [VERBOSE] 20:04:16 - Checking deployment status in 60 seconds
+20:05:17 - [VERBOSE] 20:05:17 - Checking deployment status in 60 seconds
+20:06:17 - [VERBOSE] 20:06:17 - Checking deployment status in 60 seconds
+20:07:17 - [VERBOSE] 20:07:17 - Checking deployment status in 60 seconds
+20:08:17 - [VERBOSE] 20:08:17 - Checking deployment status in 60 seconds
+20:09:17 - [VERBOSE] 20:09:17 - Resource Microsoft.Compute/virtualMachineScaleSets 'webfarm' provisioning status is running
+20:09:17 - [VERBOSE] 20:09:17 - Resource Microsoft.Compute/virtualMachines/extensions 'jboxazmoodcluvm/install_moodle' provisioning status is succeeded
+20:09:17 - [VERBOSE] 20:09:17 - Checking deployment status in 60 seconds
+20:10:18 - [VERBOSE] 20:10:18 - Checking deployment status in 60 seconds
+20:11:18 - [VERBOSE] 20:11:18 - Checking deployment status in 60 seconds
+20:12:18 - [VERBOSE] 20:12:18 - Checking deployment status in 60 seconds
+20:13:18 - [VERBOSE] 20:13:18 - Resource Microsoft.Insights/autoscaleSettings 'autoscalewad' provisioning status is succeeded
+20:13:18 - [VERBOSE] 20:13:18 - Resource Microsoft.Compute/virtualMachineScaleSets 'webfarm' provisioning status is succeeded
+20:13:18 - 
+20:13:18 - DeploymentName          : linuxvirtualmachinescaleset-1014-2247
+20:13:18 - CorrelationId           : 9d49aed0-3ded-4c9e-af0d-1e16da5846bc
+20:13:18 - ResourceGroupName       : PRO-EAD-UNICASTELO
+20:13:18 - ProvisioningState       : Succeeded
+20:13:18 - Timestamp               : 14/10/2016 23:12:37
+20:13:18 - Mode                    : Incremental
+20:13:18 - TemplateLink            : 
+20:13:18 - TemplateLinkString      : 
+20:13:18 - DeploymentDebugLogLevel : 
+20:13:18 - Parameters              : {[resourcesPrefix, Microsoft.Azure.Commands.ResourceM
+20:13:18 -                           anager.Cmdlets.SdkModels.DeploymentVariable], 
+20:13:18 -                           [vmSize, Microsoft.Azure.Commands.ResourceManager.Cmd
+20:13:18 -                           lets.SdkModels.DeploymentVariable], [moodleVersion, M
+20:13:18 -                           icrosoft.Azure.Commands.ResourceManager.Cmdlets.SdkMo
+20:13:18 -                           dels.DeploymentVariable], [adminUsername, Microsoft.A
+20:13:18 -                           zure.Commands.ResourceManager.Cmdlets.SdkModels.Deplo
+20:13:18 -                           ymentVariable]...}
+20:13:18 - ParametersString        : 
+20:13:18 -                           Name             Type                       Value    
+20:13:18 -                            
+20:13:18 -                           ===============  =========================  
+20:13:18 -                           ==========
+20:13:18 -                           resourcesPrefix  String                     
+20:13:18 -                           azmoodclu 
+20:13:18 -                           vmSize           String                     
+20:13:18 -                           Standard_DS1_v2
+20:13:18 -                           moodleVersion    String                     
+20:13:18 -                           MOODLE_30_STABLE
+20:13:18 -                           adminUsername    String                     
+20:13:18 -                           azureadmin
+20:13:18 -                           adminPassword    SecureString                        
+20:13:18 -                            
+20:13:18 -                           mySQLuserPassword  SecureString                      
+20:13:18 -                              
+20:13:18 -                           mySQLrootPassword  SecureString                      
+20:13:18 -                              
+20:13:18 -                           
+20:13:18 - Outputs                 : 
+20:13:18 - OutputsString           : 
+20:13:18 - 
+20:13:18 - 
+20:13:18 - 
+20:13:18 - 
+20:13:18 - Successfully deployed template 'c:\users\fabio.vello\source\repos\moodleazure_itocre\moodleazure_cloud01_bulid4\templates\linuxvirtualmachinescaleset.json' to resource group 'PRO-EAD-UNICASTELO'.
