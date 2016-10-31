@@ -29,6 +29,9 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
+    <None Include="Scripts\install_mariadb.sh" />
+    <None Include="Scripts\install_moodle.sh" />
+    <None Include="Scripts\install_ngix.sh" />
     <None Include="Scripts\setup_moodle.sh" />
     <None Include="Templates\LinuxVirtualMachineScaleSet.json" />
     <None Include="Templates\LinuxVirtualMachineScaleSet.parameters.json" />

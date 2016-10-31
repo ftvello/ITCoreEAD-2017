@@ -115,7 +115,7 @@
         },
         "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses','webpip')]",
         "siteFQDN" : "", 
-        "moodleScriptLocation": "https://raw.githubusercontent.com/pateixei/MoodleAzure/master/scripts/",
+        "moodleScriptLocation": "https://raw.githubusercontent.com/ftvello/EDU_MoodleAzure_Homo/master/Scripts/",
         "install_moodleScriptFileName": "install_moodle.sh",
         "setup_moodleScriptFileName": "setup_moodle.sh",
         "mariadbScriptLocation": "https://raw.githubusercontent.com/pateixei/MoodleAzure/master/scripts/",
