@@ -118,7 +118,7 @@
         "moodleScriptLocation": "https://raw.githubusercontent.com/ftvello/EDU_MoodleAzure_Homo/master/Scripts/",
         "install_moodleScriptFileName": "install_moodle.sh",
         "setup_moodleScriptFileName": "setup_moodle.sh",
-        "mariadbScriptLocation": "https://raw.githubusercontent.com/pateixei/MoodleAzure/master/scripts/",
+        "mariadbScriptLocation": "https://raw.githubusercontent.com/ftvello/EDU_MoodleAzure_Homo/master/Scripts/",
         "install_mariadbScriptFileName": "install_mariadb.sh",
         "nodeDBCount" : 2,
         "subnetIPBase": "172.18.2.",
