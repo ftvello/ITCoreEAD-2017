@@ -80,7 +80,7 @@ echo -e '
         SSLCertificateFile /moodle/certs/fullchain.pem
 		SSLCertificateKeyFile /moodle/certs/privkey.pem
 		#SSLCertificateFile /moodle/certs/da0c9b915e6265f2.crt
-        #SSLCertificateKeyFile /moodle/certs/privateKey.pem
+		#SSLCertificateKeyFile /moodle/certs/privateKey.pem
 		BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
                         downgrade-1.0 force-response-1.0
