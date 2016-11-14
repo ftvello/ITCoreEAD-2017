@@ -78,10 +78,10 @@ echo -e '
         CustomLog ${APACHE_LOG_DIR}/access.log combined
         SSLEngine on
         SSLCertificateFile /moodle/certs/fullchain.pem
-		SSLCertificateKeyFile /moodle/certs/privkey.pem
-		#SSLCertificateFile /moodle/certs/da0c9b915e6265f2.crt
-		#SSLCertificateKeyFile /moodle/certs/privateKey.pem
-		BrowserMatch "MSIE [2-6]" \
+        SSLCertificateKeyFile /moodle/certs/privkey.pem
+        #SSLCertificateFile /moodle/certs/da0c9b915e6265f2.crt
+        #SSLCertificateKeyFile /moodle/certs/privateKey.pem
+        BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
                         downgrade-1.0 force-response-1.0
         BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
