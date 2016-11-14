@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "MoodleAzure_Cloud01_Bulid4- homologacao", "MoodleAzure_Cloud01_Bulid4- homologacao.deployproj", "{02FF23EE-F275-40B8-9956-C03ED353E777}"
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Cloud01_Bulid4-ProducaoV1", "Cloud01_Bulid4-ProducaoV1.deployproj", "{02FF23EE-F275-40B8-9956-C03ED353E777}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
