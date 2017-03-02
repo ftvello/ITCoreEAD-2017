@@ -54,94 +54,95 @@
             }
         }
     },
-    "variables": {
-        "storageAcctName": "[concat(parameters('resourcesPrefix'),'sa')]",
-        "jboxpipName" : "[concat('jb-',parameters('resourcesPrefix'))]",
-        "vnetName": "[concat(parameters('resourcesPrefix'),'vnet')]",
-        "vmName": "[concat(parameters('resourcesPrefix'),'vm')]",
-        "vnetPrefix": "172.18.0.0/16",
-        "SubnetWeb": "webtier",
-        "SubnetWebPrefix": "172.18.0.0/24",
-        "SubnetWebRef": "[concat(variables('vnetID'), '/subnets/', variables('SubnetWeb'))]",
-        "SubnetSan": "santier",
-        "SubnetSanPrefix": "172.18.1.0/24",
-        "GfsVmIPPrefix": "172.18.1.1",
-        "volumeName": "data",
-        "SubnetDb": "datatier",
-        "SubnetDbPrefix": "172.18.2.0/24",
-        "dbVmIPPrefix": "172.18.2.1",
-        "nicName": "vmssnic",
-        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
-        "webSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetWeb'))]",
-        "sanSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetSan'))]",
-        "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetDb'))]",
-        "osImagePublisher": "Canonical",
-        "osImageOffer": "UbuntuServer",
-        "osImageSKU": "14.04.4-LTS",
-        "osImageVersion": "latest",
-        "GlusterSetupCmd": "bash azuregfs.sh",
-        "customScriptFilePath": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/gluster-file-system/azuregfs.sh",
-        "scaleNumber": 2,
-        "gfsScaleNumber": 2,
-        "SharedStorageAccountName": "[concat(variables('storageAcctName'), uniqueString(resourceGroup().id))]",
-        "JumpVmOSDiskName": "JumpVmOSDisk",
-        "JumpVmVmSize": "Standard_DS1_v2",
-        "JumpVmStorageAccountContainerName": "vhds",
-        "diagnosticsStorageAccountName": "[variables('SharedStorageAccountName')]",
-        "diagnosticsStorageAccountResourceGroup": "[resourceGroup().name]",
-        "wadlogs": "<WadCfg><DiagnosticMonitorConfiguration>",
-        "wadperfcounters1": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory percentage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedByCache\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. used by cache\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIdleTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU idle time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentUserTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentProcessorTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU percentage guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIOWaitTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU IO wait time\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
-        "wadperfcounters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\BytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WriteBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\TransfersPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk transfers\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadsPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WritesPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageReadTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageWriteTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageTransferTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk transfer time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageDiskQueueLength\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Disk queue length\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
-        "wadcfgxstart": "[concat(variables('wadlogs'),variables('wadperfcounters1'),variables('wadperfcounters2'),'<Metrics resourceId=\"')]",
-        "wadmetricsresourceid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name ,'/providers/','Microsoft.Compute/virtualMachineScaleSets/','vmSS',variables('vmName'))]",
-        "wadcfgxend": "[concat('\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
-        "natPoolName": "natpool",
-        "bePoolName": "bePool",
-        "natStartPort": 50000,
-        "natEndPort": 50119,
-        "natBackendPort": 22,
-        "ilbNicName": "ilbnic",
-        "lbID": "[resourceId('Microsoft.Network/loadBalancers','lbWeb')]",
-        "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/ipcfg_lb')]",
-        "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
-        "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/', variables('bePoolName'))]",        
-        "storageApiVersion": "2015-06-15",
-        "accountid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',variables('diagnosticsStorageAccountResourceGroup'),'/providers/','Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]",
-        "osType": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "14.04.4-LTS",
-            "version": "latest"
-        },
-        "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses','webpip')]",
-        "siteFQDN" : "", 
-        "moodleScriptLocation": "https://raw.githubusercontent.com/ftvello/EDU_MoodleAzure_Homo/master/Scripts/",
-        "install_moodleScriptFileName": "install_moodle.sh",
-        "setup_moodleScriptFileName": "setup_moodle.sh",
-        "mariadbScriptLocation": "https://raw.githubusercontent.com/ftvello/EDU_MoodleAzure_Homo/master/Scripts/",
-        "install_mariadbScriptFileName": "install_mariadb.sh",
-        "nodeDBCount" : 2,
-        "subnetIPBase": "172.18.2.",
-        "mariadbbe": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/backendAddressPools/mariadb-be')]",
-        "mariadbfipc": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/frontendIPConfigurations/mariadb-fipc')]",
-        "mariadbprobe": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/probes/mariadb-probe')]"    },
+  "variables": {
+    "storageAcctName": "[concat(parameters('resourcesPrefix'),'sa')]",
+    "jboxpipName": "[concat('jb-',parameters('resourcesPrefix'))]",
+    "vnetName": "[concat(parameters('resourcesPrefix'),'vnet')]",
+    "vmName": "[concat(parameters('resourcesPrefix'),'vm')]",
+    "vnetPrefix": "172.18.0.0/16",
+    "SubnetWeb": "webtier",
+    "SubnetWebPrefix": "172.18.0.0/24",
+    "SubnetWebRef": "[concat(variables('vnetID'), '/subnets/', variables('SubnetWeb'))]",
+    "SubnetSan": "santier",
+    "SubnetSanPrefix": "172.18.1.0/24",
+    "GfsVmIPPrefix": "172.18.1.1",
+    "volumeName": "data",
+    "SubnetDb": "datatier",
+    "SubnetDbPrefix": "172.18.2.0/24",
+    "dbVmIPPrefix": "172.18.2.1",
+    "nicName": "vmssnic",
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+    "webSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetWeb'))]",
+    "sanSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetSan'))]",
+    "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetDb'))]",
+    "osImagePublisher": "Canonical",
+    "osImageOffer": "UbuntuServer",
+    "osImageSKU": "14.04.4-LTS",
+    "osImageVersion": "latest",
+    "GlusterSetupCmd": "bash azuregfs.sh",
+    "customScriptFilePath": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/gluster-file-system/azuregfs.sh",
+    "scaleNumber": 2,
+    "gfsScaleNumber": 2,
+    "SharedStorageAccountName": "[concat(variables('storageAcctName'), uniqueString(resourceGroup().id))]",
+    "JumpVmOSDiskName": "JumpVmOSDisk",
+    "JumpVmVmSize": "Standard_DS1_v2",
+    "JumpVmStorageAccountContainerName": "vhds",
+    "diagnosticsStorageAccountName": "[variables('SharedStorageAccountName')]",
+    "diagnosticsStorageAccountResourceGroup": "[resourceGroup().name]",
+    "wadlogs": "<WadCfg><DiagnosticMonitorConfiguration>",
+    "wadperfcounters1": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory percentage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedByCache\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. used by cache\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIdleTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU idle time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentUserTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentProcessorTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU percentage guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIOWaitTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU IO wait time\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
+    "wadperfcounters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\BytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WriteBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\TransfersPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk transfers\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadsPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WritesPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageReadTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageWriteTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageTransferTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk transfer time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageDiskQueueLength\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Disk queue length\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
+    "wadcfgxstart": "[concat(variables('wadlogs'),variables('wadperfcounters1'),variables('wadperfcounters2'),'<Metrics resourceId=\"')]",
+    "wadmetricsresourceid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name ,'/providers/','Microsoft.Compute/virtualMachineScaleSets/','vmSS',variables('vmName'))]",
+    "wadcfgxend": "[concat('\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
+    "natPoolName": "natpool",
+    "bePoolName": "bePool",
+    "natStartPort": 50000,
+    "natEndPort": 50119,
+    "natBackendPort": 22,
+    "ilbNicName": "ilbnic",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers','lbWeb')]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/ipcfg_lb')]",
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/', variables('bePoolName'))]",
+    "storageApiVersion": "2015-06-15",
+    "accountid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',variables('diagnosticsStorageAccountResourceGroup'),'/providers/','Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]",
+    "osType": {
+      "publisher": "Canonical",
+      "offer": "UbuntuServer",
+      "sku": "14.04.4-LTS",
+      "version": "latest"
+    },
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses','webpip')]",
+    "siteFQDN": "",
+    "moodleScriptLocation": "https://raw.githubusercontent.com/ftvello/ITCoreEAD-2017/master/Scripts/",
+    "install_moodleScriptFileName": "install_moodle.sh",
+    "setup_moodleScriptFileName": "setup_moodle.sh",
+    "mariadbScriptLocation": "https://raw.githubusercontent.com/ftvello/ITCoreEAD-2017/master/Scripts/",
+    "install_mariadbScriptFileName": "install_mariadb.sh",
+    "nodeDBCount": 2,
+    "subnetIPBase": "172.18.2.",
+    "mariadbbe": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/backendAddressPools/mariadb-be')]",
+    "mariadbfipc": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/frontendIPConfigurations/mariadb-fipc')]",
+    "mariadbprobe": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/probes/mariadb-probe')]"
+  },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[concat('gfs',variables('storageAcctName'), copyIndex())]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "GfsStorageAccount"
-            },
-            "copy": {
-                "name": "gfs",
-                "count": "[variables('GfsScaleNumber')]"
-            },
-            "properties": {
-                "accountType": "Standard_LRS"
-            }
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[concat('gfs',variables('storageAcctName'), copyIndex())]",
+        "apiVersion": "2015-05-01-preview",
+        "location": "[resourceGroup().location]",
+        "tags": {
+          "displayName": "GfsStorageAccount"
         },
+        "copy": {
+          "name": "gfs",
+          "count": "[variables('GfsScaleNumber')]"
+        },
+        "properties": {
+          "accountType": "Premium_LRS"
+        }
+      },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2015-05-01-preview",
@@ -171,9 +172,9 @@
             "tags": {
                 "displayName": "DatabaseStorageAccount"
             },
-            "properties": {
-                "accountType": "Standard_LRS"
-            }
+          "properties": {
+            "accountType": "Premium_LRS"
+          }
         },
         {
             "name": "[variables('SharedStorageAccountName')]",
@@ -235,7 +236,7 @@
                 "displayName": "jboxpip"
             },
             "properties": {
-                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "static",
                 "dnsSettings": {
                     "domainNameLabel": "[variables('jBoxPipName')]"
                 }
@@ -384,7 +385,7 @@
                 "dnsSettings": {
                     "domainNameLabel": "[tolower(concat('lb-',parameters('resourcesPrefix')))]"
                 },
-                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "static",
                 "tags": {
                     "displayName": "webpip"
                 }
@@ -438,7 +439,7 @@
                     "dataDisks": [
                         {
                             "name": "datadisk1",
-                            "diskSizeGB": "80",
+                            "diskSizeGB": "128",
                             "lun": 0,
                             "vhd": {
                                 "uri": "[concat('http://', 'gfs', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/gfs', variables('vmName'), copyIndex(), 'datadisk1.vhd')]"
@@ -447,7 +448,7 @@
                         },
                         {
                             "name": "datadisk2",
-                            "diskSizeGB": "80",
+                            "diskSizeGB": "128",
                             "lun": 1,
                             "vhd": {
                                 "uri": "[concat('http://', 'gfs', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/gfs', variables('vmName'), copyIndex(), 'datadisk2.vhd')]"
@@ -513,7 +514,7 @@
                     "dataDisks": [
                         {
                             "name": "datadisk1",
-                            "diskSizeGB": "60",
+                            "diskSizeGB": "128",
                             "lun": 0,
                             "vhd": {
                                 "uri": "[concat('http://', 'db', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/', 'db', variables('vmName'), copyIndex(), 'datadisk1.vhd')]"
@@ -522,7 +523,7 @@
                         },
                         {
                             "name": "datadisk2",
-                            "diskSizeGB": "60",
+                            "diskSizeGB": "128",
                             "lun": 1,
                             "vhd": {
                                 "uri": "[concat('http://', 'db', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/', 'db', variables('vmName'), copyIndex(), 'datadisk2.vhd')]"

@@ -81,7 +81,6 @@ echo -e '# Automatically generated for Debian scripts. DO NOT TOUCH!
     user     = debian-sys-maint
     password = '$DEBPASSWORD '
     socket   = /var/run/mysqld/mysqld.sock
-
     [mysql_upgrade]
     host     = localhost
     user     = debian-sys-maint
@@ -96,7 +95,6 @@ CREATE DATABASE moodle;
 GRANT ALL PRIVILEGES ON moodle.* TO 'moodledba'@'%'
 IDENTIFIED BY '$USERPASSWORD';
 FLUSH PRIVILEGES;
-
 GRANT ALL PRIVILEGES on *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DEBPASSWORD' WITH GRANT OPTION;
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQLPASSWORD');
 CREATE USER 'root'@'%' IDENTIFIED BY '$MYSQLPASSWORD';
@@ -117,7 +115,7 @@ service mysql stop
 
 # create Galera config file
 
-wget https://raw.githubusercontent.com/pateixei/azure-nginx-php-mariadb-cluster/master/files/cluster.cnf > /dev/null
+#wget https://raw.githubusercontent.com/pateixei/azure-nginx-php-mariadb-cluster/master/files/cluster.cnf > /dev/null
 echo -e '[mysqld]
 #mysql settings
 #wsrep_on=ON
@@ -127,13 +125,11 @@ innodb_autoinc_lock_mode=2
 query_cache_size=0
 query_cache_type=0
 bind-address=0.0.0.0
-
 #galera settings
 wsrep_provider=/usr/lib/galera/libgalera_smm.so
 wsrep_cluster_name="CLUSTERNAME"
 wsrep_cluster_address="gcomm://IPLIST"
 wsrep_sst_method=rsync
-
 # Galera Node Configuration
 wsrep_node_address="MYIP" 
 wsrep_node_name="MYNAME"' > ~/cluster.cnf 

@@ -1,3 +1,5 @@
+# Custom Script for Linux
+
 #!/bin/bash
 
 # The MIT License (MIT)
@@ -79,8 +81,6 @@ echo -e '
         SSLEngine on
         SSLCertificateFile /moodle/certs/fullchain.pem
         SSLCertificateKeyFile /moodle/certs/privkey.pem
-        #SSLCertificateFile /moodle/certs/da0c9b915e6265f2.crt
-        #SSLCertificateKeyFile /moodle/certs/privateKey.pem
         BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
                         downgrade-1.0 force-response-1.0
@@ -152,7 +152,7 @@ apc.max_file_size=2M
 apc.cache_by_default=1
 apc.use_request_time=1
 apc.slam_defense=0
-#apc.mmap_file_mask=/tmp/apc.tmp
+;apc.mmap_file_mask=/tmp/apc.tmp
 apc.stat_ctime=0
 apc.canonicalize=1
 apc.write_lock=1
