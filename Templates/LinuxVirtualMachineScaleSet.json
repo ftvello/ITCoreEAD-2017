@@ -127,22 +127,22 @@
     "mariadbprobe": "[concat(resourceId('Microsoft.Network/loadBalancers','mariadblb'),'/probes/mariadb-probe')]"
   },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[concat('gfs',variables('storageAcctName'), copyIndex())]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "GfsStorageAccount"
-            },
-            "copy": {
-                "name": "gfs",
-                "count": "[variables('GfsScaleNumber')]"
-            },
-            "properties": {
-                "accountType": "Standard_LRS"
-            }
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[concat('gfs',variables('storageAcctName'), copyIndex())]",
+        "apiVersion": "2015-05-01-preview",
+        "location": "[resourceGroup().location]",
+        "tags": {
+          "displayName": "GfsStorageAccount"
         },
+        "copy": {
+          "name": "gfs",
+          "count": "[variables('GfsScaleNumber')]"
+        },
+        "properties": {
+          "accountType": "Premium_LRS"
+        }
+      },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2015-05-01-preview",
@@ -172,9 +172,9 @@
             "tags": {
                 "displayName": "DatabaseStorageAccount"
             },
-            "properties": {
-                "accountType": "Standard_LRS"
-            }
+          "properties": {
+            "accountType": "Premium_LRS"
+          }
         },
         {
             "name": "[variables('SharedStorageAccountName')]",
@@ -236,7 +236,7 @@
                 "displayName": "jboxpip"
             },
             "properties": {
-                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "static",
                 "dnsSettings": {
                     "domainNameLabel": "[variables('jBoxPipName')]"
                 }
@@ -385,7 +385,7 @@
                 "dnsSettings": {
                     "domainNameLabel": "[tolower(concat('lb-',parameters('resourcesPrefix')))]"
                 },
-                "publicIPAllocationMethod": "Dynamic",
+                "publicIPAllocationMethod": "static",
                 "tags": {
                     "displayName": "webpip"
                 }
@@ -439,7 +439,7 @@
                     "dataDisks": [
                         {
                             "name": "datadisk1",
-                            "diskSizeGB": "80",
+                            "diskSizeGB": "128",
                             "lun": 0,
                             "vhd": {
                                 "uri": "[concat('http://', 'gfs', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/gfs', variables('vmName'), copyIndex(), 'datadisk1.vhd')]"
@@ -448,7 +448,7 @@
                         },
                         {
                             "name": "datadisk2",
-                            "diskSizeGB": "80",
+                            "diskSizeGB": "128",
                             "lun": 1,
                             "vhd": {
                                 "uri": "[concat('http://', 'gfs', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/gfs', variables('vmName'), copyIndex(), 'datadisk2.vhd')]"
@@ -514,7 +514,7 @@
                     "dataDisks": [
                         {
                             "name": "datadisk1",
-                            "diskSizeGB": "60",
+                            "diskSizeGB": "128",
                             "lun": 0,
                             "vhd": {
                                 "uri": "[concat('http://', 'db', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/', 'db', variables('vmName'), copyIndex(), 'datadisk1.vhd')]"
@@ -523,7 +523,7 @@
                         },
                         {
                             "name": "datadisk2",
-                            "diskSizeGB": "60",
+                            "diskSizeGB": "128",
                             "lun": 1,
                             "vhd": {
                                 "uri": "[concat('http://', 'db', variables('storageAcctName'), copyindex(),'.blob.core.windows.net/vhds/', 'db', variables('vmName'), copyIndex(), 'datadisk2.vhd')]"
