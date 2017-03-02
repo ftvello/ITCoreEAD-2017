@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
   "parameters": {
     "adminPassword": {
-      "value": "Ead2016@admin" 
+      "value": "Ead2017@admin" 
     },
     "adminUsername": {
       "value": "azureadmin"
@@ -15,13 +15,13 @@
           "value": "MOODLE_30_STABLE"
       },
       "mySQLuserPassword": {
-          "value": "Ead2016@admin"
+          "value": "Ead2017@admin"
       },
       "mySQLrootPassword": {
-          "value": "Ead2016@admin"
+          "value": "Ead2017@admin"
       },
       "resourcesPrefix": {
-          "value": "azmoodhom"
+          "value": "eadtvglobo"
       }
   }
 }
