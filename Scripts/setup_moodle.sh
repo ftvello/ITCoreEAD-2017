@@ -79,8 +79,8 @@ echo -e '
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
         SSLEngine on
-        SSLCertificateFile /moodle/certs/fullchain.pem
-        SSLCertificateKeyFile /moodle/certs/privkey.pem
+        SSLCertificateFile /moodle/certs/apache.crt
+        SSLCertificateKeyFile /moodle/certs/apache.key
         BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
                         downgrade-1.0 force-response-1.0
