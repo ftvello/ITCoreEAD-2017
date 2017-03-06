@@ -12,7 +12,7 @@
       "value": "Standard_DS1_v2"
     },
       "moodleVersion": {
-          "value": "MOODLE_30_STABLE"
+          "value": "MOODLE_31_STABLE"
       },
       "mySQLuserPassword": {
           "value": "Ead2017@admin"
@@ -21,7 +21,7 @@
           "value": "Ead2017@admin"
       },
       "resourcesPrefix": {
-          "value": "eadtvglobo"
+          "value": "eadglobo"
       }
   }
 }

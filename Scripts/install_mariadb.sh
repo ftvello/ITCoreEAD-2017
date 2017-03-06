@@ -122,8 +122,13 @@ echo -e '[mysqld]
 binlog_format=ROW
 default-storage-engine=innodb
 innodb_autoinc_lock_mode=2
-query_cache_size=0
+query_cache_size=8M
 query_cache_type=0
+query_cache_limit=128K
+tmp_table_size=32M
+max_heap_table_size=32M
+performance_schema=ON
+innodb_flush_log_at_trx_commit=0
 bind-address=0.0.0.0
 #galera settings
 wsrep_provider=/usr/lib/galera/libgalera_smm.so
