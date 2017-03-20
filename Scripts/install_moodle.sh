@@ -1,4 +1,4 @@
-    #!/bin/bash
+#!/bin/bash
 
     # The MIT License (MIT)
     #
@@ -51,16 +51,156 @@
     sudo mkdir -p /moodle/moodledata
 
     # install pre-requisites
-    sudo apt-get install -y --fix-missing python-software-properties unzip
+    sudo apt-get install -y --fix-missing python-software-properties unzip lsb-release bc
 
-    # install the LAMP stack
-    sudo apt-get install -y apache2 mysql-client php5
+    REL=`lsb_release -sc`
+    DISTRO=`lsb_release -is | tr [:upper:] [:lower:]`
+    NCORES=` cat /proc/cpuinfo | grep cores | wc -l`
+    WORKER=`bc -l <<< "4*$NCORES"`
 
-    # install moodle requirements
-    sudo apt-get install -y --fix-missing graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis ghostscript php5-memcached memcached php5-dev
+    wget http://nginx.org/keys/nginx_signing.key
+    echo "deb http://nginx.org/packages/$DISTRO/ $REL nginx" >> /etc/apt/sources.list
+    echo "deb-src http://nginx.org/packages/$DISTRO/ $REL nginx" >> /etc/apt/sources.list
 
-    # install modules for tunning
-    sudo apt-get -y install libapache2-mod-fastcgi php5-fpm php5-apcu
+    sudo apt-key add nginx_signing.key
+    sudo apt-get update
+    sudo apt-get install -fy nginx
+    sudo apt-get install -fy php7.0-fpm php7.0-cli php7.0-mysql
+    sudo apt-get install -fy php-apcu php7.0-gd
+
+    # replace www-data to nginx into /etc/php5/fpm/pool.d/www.conf
+    sed -i 's/www-data/nginx/g' /etc/php/7.0/fpm/pool.d/www.conf
+    service php7.0-fpm restart
+
+    # backup default Nginx configuration
+    mkdir /etc/nginx/conf-bkp
+    cp /etc/nginx/conf.d/default.conf /etc/nginx/conf-bkp/default.conf
+    cp /etc/nginx/nginx.conf /etc/nginx/nginx-conf.old
+
+    #
+    # Replace nginx.conf
+    #
+    echo -e "user nginx www-data;\nworker_processes $WORKER;" > /etc/nginx/nginx.conf
+    echo -e 'pid /var/run/nginx.pid;
+    events {
+        worker_connections 768;
+        # multi_accept on;
+    }
+    http {
+    # Basic Settings
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 5;
+        types_hash_max_size 2048;
+        # server_tokens off;
+        # server_names_hash_bucket_size 64;
+        # server_name_in_redirect off;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        ##
+        # SSL Settings
+        ##
+
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+        ssl_prefer_server_ciphers on;
+
+    # Logging Settings
+        log_format gzip '$remote_addr - $remote_user [$time_local]  '
+            '"$request" $status $bytes_sent '
+            '"$http_referer" "$http_user_agent" "$gzip_ratio"';
+        access_log /var/log/nginx/access.log gzip buffer=32k;
+        error_log /var/log/nginx/error.log notice;
+    # Gzip Settings
+        gzip on;
+        gzip_disable "msie6";
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_buffers 16 8k;
+        gzip_http_version 1.1;
+        gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+    # Virtual Host Configs
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+    }' >> /etc/nginx/nginx.conf
+
+    # replace Nginx default.conf
+    #
+
+    echo -e '# Upstream to abstract backend connection(s) for php
+    upstream php {
+    server unix:/var/run/php/php7.0-fpm.sock;
+    #        server unix:/tmp/php-cgi.socket;
+    #        server 127.0.0.1:9000;
+    }
+ 
+    server {
+        listen       80;
+        listen 443 ssl;
+        
+        #charset koi8-r;
+        #access_log  /var/log/nginx/log/host.access.log  main;
+        
+        ## Your website name goes here.
+        server_name localhost;
+        
+        ## Your only path reference.
+        root /moodle/html/moodle;
+        ssl_certificate /moodle/certs/nginx.crt;
+        ssl_certificate_key /moodle/certs/nginx.key;
+
+        ## This should be in your http block and if it is, it`s not needed here.
+        index index.htm index.html index.php;
+        gzip on;
+        gzip_types text/css text/x-component application/x-javascript application/javascript text/javascript text/x-js text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon;
+        location = /favicon.ico {
+                log_not_found off;
+                access_log off;
+        }
+ 
+        location = /robots.txt {
+                allow all;
+                log_not_found off;
+                access_log off;
+        }
+ 
+        location / {
+                # This is cool because no php is touched for static content. 
+                # include the "?$args" part so non-default permalinks doesn`t break when using query string
+                try_files $uri $uri/ /index.php?$args;
+        }
+        location ~ \.php$ {
+            #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+            
+            # root           html;
+            # fastcgi_pass   127.0.0.1:9000;
+            fastcgi_index  index.php;
+            fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+            include        fastcgi_params;
+            
+            # include fastcgi.conf;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_intercept_errors on;
+            fastcgi_pass php;
+        }
+        location ~ \.(ttf|ttc|otf|eot|woff|font.css)$ {
+        add_header Access-Control-Allow-Origin "*";
+        }
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+                expires max;
+                log_not_found off;
+        }
+    }' > /etc/nginx/conf.d/default.conf
+
+    echo -e "Generating SSL self-signed certificate"
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /moodle/certs/nginx.key -out /moodle/certs/nginx.crt -subj "/C=BR/ST=SP/L=SaoPaulo/O=IT/CN=$siteFQDN"
+
+    service php7.0-fpm restart
+    service nginx restart
+
+    sudo apt-get install -y --fix-missing php-cli php-common php-memcached php-pear php-xml php7.0-cgi php7.0-common php7.0-curl php7.0-dev php7.0-gd php7.0-intl \
+    php7.0-json php7.0-ldap php7.0-mbstring php7.0-opcache php7.0-pspell php7.0-readline php7.0-soap php7.0-xml php7.0-xmlrpc php7.0-zip 
 
     # install Moodle 
     echo '#!/bin/bash
@@ -79,111 +219,50 @@
     #fi
     ' > /tmp/setup-moodle.sh 
     sudo chmod +x /tmp/setup-moodle.sh
-    sudo /tmp/setup-moodle.sh 
+    sudo /tmp/setup-moodle.sh
+
+    # Install Plugin Kaltura
+    sudo mkdir KALTURA ; cd KALTURA
+
+    wget --no-check-certificate https://moodle.org/plugins/download.php/12933/Kaltura_Video_Package_moodle32_2016122232.zip
+
+    unzip Kaltura_Video_Package_moodle32_2016122232.zip
+
+    rm Kaltura_Video_Package_moodle32_2016122232.zip
+
+    DESTDIR=/usr/share/nginx/html/moodle
+
+    cp -Rap filter/kaltura/ $DESTDIR/filter/ && cp -Rap lib/editor/atto/plugins/kalturamedia $DESTDIR/lib/editor/atto/plugins/ \ 
+    && cp -Rap lib/editor/tinymce/plugins/kalturamedia $DESTDIR/lib/editor/tinymce/plugins && cp -Rap local/* $DESTDIR/local/ && cp -Rap mod/* $DESTDIR/mod/
+
+    cd .. && rm -rf KALTURA
 
     # create cron entry
     # It is scheduled for once per day. It can be changed as needed.
     echo '0 0 * * * php /moodle/html/moodle/admin/cli/cron.php > /dev/null 2>&1' > cronjob
     sudo crontab cronjob
 
-    # update Apache configuration
-    sudo cp /etc/apache2/apache2.conf apache2.conf.bak
-    sudo sed -i 's/\/var\/www/\/\moodle/g' /etc/apache2/apache2.conf
-    sudo echo ServerName \"localhost\"  >> /etc/apache2/apache2.conf
-
-    #enable ssl 
-    a2enmod rewrite ssl
-
-    echo -e "Generating SSL self-signed certificate"
-    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /moodle/certs/apache.key -out /moodle/certs/apache.crt -subj "/C=BR/ST=SP/L=SaoPaulo/O=IT/CN=$siteFQDN"
-
-    echo -e "\n\rUpdating PHP and site configuration\n\r" 
-    #update virtual site configuration 
-    echo -e '
-    <VirtualHost *:80>
-            #ServerName www.example.com
-            ServerAdmin webmaster@localhost
-            DocumentRoot /moodle/html/moodle
-            #LogLevel info ssl:warn
-            ErrorLog ${APACHE_LOG_DIR}/error.log
-            CustomLog ${APACHE_LOG_DIR}/access.log combined
-            #Include conf-available/serve-cgi-bin.conf
-    </VirtualHost>
-    <VirtualHost *:443>
-            DocumentRoot /moodle/html/moodle
-            ErrorLog ${APACHE_LOG_DIR}/error.log
-            CustomLog ${APACHE_LOG_DIR}/access.log combined
-            SSLEngine on
-            SSLCertificateFile /moodle/certs/apache.crt
-            SSLCertificateKeyFile /moodle/certs/apache.key
-            BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
-            BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown        
-    </VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
-
     # php config 
-    PhpIni=/etc/php5/apache2/php.ini
+    PhpIni=/etc/php/7.0/fpm/php.ini
     sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
-    sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
-    sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
-    sed -i "s/;opcache.save_comments = 1/opcache.save_comments = 1/" $PhpIni
-    sed -i "s/;opcache.enable_file_override = 0/opcache.enable_file_override = 0/" $PhpIni
-    sed -i "s/;opcache.enable = 0/opcache.enable = 1/" $PhpIni
-    sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 256/" $PhpIni
-    sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/" $PhpIni
-    
-    echo "zend_extension=/usr/lib/php5/20121212/opcache.so" >> $PhpIni
-    echo "extension=/usr/lib/php5/20121212/apcu.so" >> $PhpIni
-  
-    sudo chown -R www-data /moodle/html/moodle
-    sudo chown -R www-data /moodle/certs
-    sudo chown -R www-data /moodle/moodledata
+    echo "extension=/usr/lib/php/20151012/apcu.so" >> $PhpIni
+    sudo chown -R nginx /moodle/html/moodle
+    sudo chown -R nginx /moodle/certs
+    sudo chown -R nginx /moodle/moodledata
     sudo chmod -R 770 /moodle/html/moodle
     sudo chmod -R 770 /moodle/certs
     sudo chmod -R 770 /moodle/moodledata
-
-    # restart Apache
-    echo -e "\n\rRestarting Apache2 httpd server\n\r"
-    sudo service apache2 restart 
+     # restart Apache
+    echo -e "\n\rRestarting Nginx server\n\r"
+    service php7.0-fpm restart
+    service nginx restart
     
-    echo -e "sudo -u www-data /usr/bin/php /moodle/html/moodle/admin/cli/install.php --chmod=770 --lang=pt_br --wwwroot=https://"$siteFQDN" --dataroot=/moodle/moodledata --dbhost=172.18.2.5 --dbpass="$moodledbapwd" --dbtype=mariadb --fullname='Moodle LMS' --shortname='Moodle' --adminuser=admin --adminpass="$moodledbapwd" --adminemail=admin@"$siteFQDN" --non-interactive --agree-license --allow-unstable || true "
+    echo -e "sudo -u nginx /usr/bin/php /moodle/html/moodle/admin/cli/install.php --chmod=770 --lang=pt_br --wwwroot=https://"$siteFQDN" --dataroot=/moodle/moodledata --dbhost=172.18.2.5 --dbpass="$moodledbapwd" --dbtype=mariadb --fullname='Moodle LMS' --shortname='Moodle' --adminuser=admin --adminpass="$moodledbapwd" --adminemail=admin@"$siteFQDN" --non-interactive --agree-license --allow-unstable || true "
+    sudo -u nginx /usr/bin/php /moodle/html/moodle/admin/cli/install.php --chmod=770 --lang=pt_br --wwwroot=https://$siteFQDN --dataroot=/moodle/moodledata --dbhost=172.18.2.5 --dbpass=$moodledbapwd --dbtype=mariadb --fullname='Moodle LMS' --shortname='Moodle' --adminuser=admin --adminpass=$moodledbapwd --adminemail=admin@$siteFQDN --non-interactive --agree-license --allow-unstable || true
 
-    sudo -u www-data /usr/bin/php /moodle/html/moodle/admin/cli/install.php --chmod=770 --lang=pt_br --wwwroot=https://$siteFQDN --dataroot=/moodle/moodledata --dbhost=172.18.2.5 --dbpass=$moodledbapwd --dbtype=mariadb --fullname='Moodle LMS' --shortname='Moodle' --adminuser=admin --adminpass=$moodledbapwd --adminemail=admin@$siteFQDN --non-interactive --agree-license --allow-unstable || true
+    #Tunning
 
-    #Tunnig
-    sudo touch /usr/lib/cgi-bin/php5.fcgi
-    sudo chown -R www-data:www-data /usr/lib/cgi-bin
-
-    echo -e '<IfModule mod_fastcgi.c>
-    AddHandler php5-fcgi .php
-    Action php5-fcgi /php5-fcgi
-    Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
-    FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php5-fpm.sock -pass-header Authorization
-    <Directory /usr/lib/cgi-bin>
-        Require all granted
-    </Directory>
-    </IfModule>' > /etc/apache2/conf-available/php5-fpm.conf
-
-    echo -e '<IfModule mod_deflate.c>
-        <IfModule mod_filter.c>
-                # these are known to be safe with MSIE 6
-                AddOutputFilterByType DEFLATE text/html text/plain text/xml
-                # everything else may cause problems with MSIE 6
-                AddOutputFilterByType DEFLATE text/css
-                AddOutputFilterByType DEFLATE application/x-javascript application/javascript application/ecmascript
-                AddOutputFilterByType DEFLATE application/rss+xml
-                AddOutputFilterByType DEFLATE application/xml
-                AddOutputFilterByType DEFLATE application/xml
-                AddOutputFilterByType DEFLATE application/xhtml+xml
-                AddOutputFilterByType DEFLATE application/rss+xml
-                AddOutputFilterByType DEFLATE application/javascript
-                AddOutputFilterByType DEFLATE application/x-javascript
-                AddOutputFilterByType DEFLATE text/plain
-                AddOutputFilterByType DEFLATE text/html
-                AddOutputFilterByType DEFLATE text/xml
-                AddOutputFilterByType DEFLATE text/css
-                AddOutputFilterByType DEFLATE image/x-icon
-        </IfModule>
-    </IfModule>' > /etc/apache2/mods-enabled/deflate.conf
+    pecl install channel://pecl.php.net/apcu-5.1.8
 
     echo -e 'apc.enabled=1
     apc.shm_segments=1
@@ -225,76 +304,7 @@
     apc.rfc1867_freq=0
     apc.rfc1867_ttl=3600
     apc.lazy_classes=0
-    apc.lazy_functions=0' > /etc/php5/mods-available/apcu.ini
-
-    echo -e '; Determines if Zend OPCache is enabled
-    opcache.enable=1
-    ; Determines if Zend OPCache is enabled for the CLI version of PHP
-    opcache.enable_cli=1
-    ; The OPcache shared memory storage size.
-    opcache.memory_consumption=128
-    ; The amount of memory for interned strings in Mbytes.
-    opcache.interned_strings_buffer=8
-    ; The maximum number of keys (scripts) in the OPcache hash table.
-    ; Only numbers between 200 and 100000 are allowed.
-    opcache.max_accelerated_files=7000
-    ; The maximum percentage of "wasted" memory until a restart is scheduled.
-    ;opcache.max_wasted_percentage=5
-    ; When this directive is enabled, the OPcache appends the current working
-    ; directory to the script key, thus eliminating possible collisions between
-    ; files with the same name (basename). Disabling the directive improves
-    ; performance, but may break existing applications.
-    ;opcache.use_cwd=1
-    ; When disabled, you must reset the OPcache manually or restart the
-    ; webserver for changes to the filesystem to take effect.
-    ;opcache.validate_timestamps=1
-    ; How often (in seconds) to check file timestamps for changes to the shared
-    ; memory storage allocation. ("1" means validate once per second, but only
-    ; once per request. "0" means always validate)
-    opcache.revalidate_freq=60
-    ; Enables or disables file search in include_path optimization
-    ;opcache.revalidate_path=0
-    ; If disabled, all PHPDoc comments are dropped from the code to reduce the
-     ;size of the optimized code.
-    ;opcache.save_comments=1
-    ; If disabled, PHPDoc comments are not loaded from SHM, so "Doc Comments"
-    ; may be always stored (save_comments=1), but not loaded by applications
-    ; that dont need them anyway.
-    ;opcache.load_comments=1
-    ; If enabled, a fast shutdown sequence is used for the accelerated code
-    opcache.fast_shutdown=1
-    ; Allow file existence override (file_exists, etc.) performance feature.
-    ;opcache.enable_file_override=0
-    ; A bitmask, where each bit enables or disables the appropriate OPcache
-    ; passes
-    ;opcache.optimization_level=0xffffffff
-    ;opcache.inherited_hack=1
-    ;opcache.dups_fix=0
-    ; The location of the OPcache blacklist file (wildcards allowed).
-    ; Each OPcache blacklist file is a text file that holds the names of files
-    ; that should not be accelerated.
-    opcache.blacklist_filename=/etc/php.d/opcache*.blacklist
-    ; Allows exclusion of large files from being cached. By default all files
-    ; are cached.
-    ;opcache.max_file_size=0
-    ; Check the cache checksum each N requests.
-    ; The default value of "0" means that the checks are disabled.
-    ;opcache.consistency_checks=0
-    ; How long to wait (in seconds) for a scheduled restart to begin if the cache
-    ; is not being accessed.
-    ;opcache.force_restart_timeout=180
-    ; OPcache error_log file name. Empty string assumes "stderr".
-    ;opcache.error_log=
-    ; All OPcache errors go to the Web server log.
-    ; By default, only fatal errors (level 0) or errors (level 1) are logged.
-    ; You can also enable warnings (level 2), info messages (level 3) or
-    ; debug messages (level 4).
-    ;opcache.log_verbosity_level=1
-    ; Preferred Shared Memory back-end. Leave empty and let the system decide.
-    ;opcache.preferred_memory_model=
-    ; Protect the shared memory from unexpected writing during script execution.
-    ; Useful for internal debugging only.
-    ;opcache.protect_memory=0' > /etc/php5/mods-available/opcache.ini
+    apc.lazy_functions=0' > /etc/php/7.0/mods-available/apcu.ini
 
     echo -e "[www]
     user = www-data
@@ -305,12 +315,12 @@
     listen.group = www-data
     listen.allowed_clients = 127.0.0.1
     pm = dynamic
-    pm.max_children = 5
+    pm.max_children = 25
     pm.start_servers = 2
     pm.min_spare_servers = 1
     pm.max_spare_servers = 3
     pm.max_requests = 5000
-    slowlog = /var/log/php5-fpm.slow
+    slowlog = /var/log/php7.0-fpm.slow
     request_slowlog_timeout = 20s
     rlimit_files = 50000
     rlimit_core = unlimited
@@ -329,54 +339,9 @@
     php_admin_value[error_log] = /var/log/fpm-php.www.log
     php_admin_flag[log_errors] = on
     php_value[session.save_handler] = files
-    php_value[session.save_path]    = /var/lib/php5/session
-    php_value[soap.wsdl_cache_dir]  = /var/lib/php5/wsdlcache" > /etc/php5/fpm/pool.d/www.conf
-
-    # php config 
-    PhpIni=/etc/php5/apache2/php.ini
-    sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
-    sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
-    sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
-    sed -i "s/;opcache.save_comments = 1/opcache.save_comments = 1/" $PhpIni
-    sed -i "s/;opcache.enable_file_override = 0/opcache.enable_file_override = 0/" $PhpIni
-    sed -i "s/;opcache.enable = 0/opcache.enable = 1/" $PhpIni
-    sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 256/" $PhpIni
-    sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/" $PhpIni
-    sed -i "s/^;date.timezone =$/date.timezone = \"America\/Sao_Paulo\"/" $PhpIni
-    sed -i "s/^;default_charset = /default_charset = /" $PhpIni
-    sed -i "s/^upload_max_filesize = 2M/upload_max_filesize = 10M/" $PhpIni
-    sed -i "s/^post_max_size = 8M/post_max_size = 20M/" $PhpIni
-    sed -i "s/^;realpath_cache_size = 16k/realpath_cache_size = 64K/" $PhpIni
-    sed -i "s/^;realpath_cache_ttl = 120/realpath_cache_ttl = 3600/" $PhpIni
-    sed -i "s/^max_execution_time = 30/max_execution_time = 120/" $PhpIni
-
-    PhpFpm=/etc/php5/fpm/php-fpm.conf
-    sed -i "s/^;emergency_restart_threshold = 0/emergency_restart_threshold = 10/" $PhpFpm
-    sed -i "s/^;emergency_restart_interval = 0/emergency_restart_interval = 1m/" $PhpFpm
-    sed -i "s/^;process_control_timeout = 0/process_control_timeout = 10/" $PhpFpm
-    sed -i "s/^;daemonize = yes/daemonize = yes/" $PhpFpm
-    sed -i "s/^;events.mechanism = epoll/events.mechanism = epoll/" $PhpFpm
-    sed -i "s/^;emergency_restart_threshold = 0/emergency_restart_threshold = 10/" $PhpFpm
-    sed -i "s/^;emergency_restart_interval = 0/emergency_restart_interval = 1m/" $PhpFpm
-    sed -i "s/^;process_control_timeout = 0/process_control_timeout = 10/" $PhpFpm
-    sed -i "s/^;daemonize = yes/daemonize = yes/" $PhpFpm
-    sed -i "s/^;events.mechanism = epoll/events.mechanism = epoll/" $PhpFpm
-
-    sudo chown -R www-data:azureadmin /moodle
-    sudo chmod 770 -R /moodle/
-
-    sudo a2enmod actions fastcgi alias
-    sudo a2enconf php5-fpm
-
-    pecl install channel://pecl.php.net/apcu-4.0.7
-
-    # restart Apache
-    sudo service apache2 restart
-    sudo service php5-fpm restart
-
-    source /etc/apache2/envvars
-
+    php_value[session.save_path]    = /var/lib/php/session
+    php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache" > /etc/php/7.0/fpm/pool.d/www.conf
+    
     echo -e "\n\rDone! Installation completed!\n\r"
-
 
     } > /tmp/install.log
