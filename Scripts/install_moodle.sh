@@ -54,13 +54,13 @@
     sudo apt-get install -y --fix-missing python-software-properties unzip
 
     # install the LAMP stack
-    sudo apt-get install -y apache2 mysql-client php7.0
+    sudo apt-get install -y apache2 mysql-client php5
 
     # install moodle requirements
-    sudo apt-get install -y --fix-missing graphviz aspell php7.0-pspell php7.0-curl php7.0-gd php7.0-intl php7.0-mysql php7.0-xmlrpc php7.0-ldap php-redis ghostscript php-memcached memcached php7.0-dev
+    sudo apt-get install -y --fix-missing graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis ghostscript php5-memcached memcached php5-dev
 
     # install modules for tunning
-    sudo apt-get -y install libapache2-mod-fastcgi php7.0-fpm php-apcu
+    sudo apt-get -y install libapache2-mod-fastcgi php5-fpm php5-apcu
 
     # install Moodle 
     echo '#!/bin/bash
@@ -79,24 +79,7 @@
     #fi
     ' > /tmp/setup-moodle.sh 
     sudo chmod +x /tmp/setup-moodle.sh
-    sudo /tmp/setup-moodle.sh
-
-    mkdir KALTURA
-	cd KALTURA
-
-	wget --no-check-certificate https://moodle.org/plugins/download.php/12933/Kaltura_Video_Package_moodle32_2016122232.zip
-
-	unzip Kaltura_Video_Package_moodle32_2016122232.zip
-
-	rm Kaltura_Video_Package_moodle32_2016122232.zip
-
-	DESTDIR=/usr/share/nginx/html/moodle
-
-	cp -Rap filter/kaltura/ $DESTDIR/filter/ && cp -Rap lib/editor/atto/plugins/kalturamedia $DESTDIR/lib/editor/atto/plugins/ \ 
-	&& cp -Rap lib/editor/tinymce/plugins/kalturamedia $DESTDIR/lib/editor/tinymce/plugins && cp -Rap local/* $DESTDIR/local/ && cp -Rap mod/* $DESTDIR/mod/
-
-	cd .. && rm -rf KALTURA
-
+    sudo /tmp/setup-moodle.sh 
 
     # create cron entry
     # It is scheduled for once per day. It can be changed as needed.
@@ -120,7 +103,7 @@
     <VirtualHost *:80>
             #ServerName www.example.com
             ServerAdmin webmaster@localhost
-            DocumentRoot /moodle000/html/moodle
+            DocumentRoot /moodle/html/moodle
             #LogLevel info ssl:warn
             ErrorLog ${APACHE_LOG_DIR}/error.log
             CustomLog ${APACHE_LOG_DIR}/access.log combined
@@ -138,7 +121,7 @@
     </VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
 
     # php config 
-    PhpIni=/etc/php/7.0/apache2/php.ini
+    PhpIni=/etc/php5/apache2/php.ini
     sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
     sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
     sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
@@ -148,8 +131,8 @@
     sed -i "s/;opcache.memory_consumption.*/opcache.memory_consumption = 256/" $PhpIni
     sed -i "s/;opcache.max_accelerated_files.*/opcache.max_accelerated_files = 8000/" $PhpIni
     
-    echo "zend_extension=/usr/lib/php/20121212/opcache.so" >> $PhpIni
-    echo "extension=/usr/lib/php/20121212/apcu.so" >> $PhpIni
+    echo "zend_extension=/usr/lib/php5/20121212/opcache.so" >> $PhpIni
+    echo "extension=/usr/lib/php5/20121212/apcu.so" >> $PhpIni
   
     sudo chown -R www-data /moodle/html/moodle
     sudo chown -R www-data /moodle/certs
@@ -167,18 +150,18 @@
     sudo -u www-data /usr/bin/php /moodle/html/moodle/admin/cli/install.php --chmod=770 --lang=pt_br --wwwroot=https://$siteFQDN --dataroot=/moodle/moodledata --dbhost=172.18.2.5 --dbpass=$moodledbapwd --dbtype=mariadb --fullname='Moodle LMS' --shortname='Moodle' --adminuser=admin --adminpass=$moodledbapwd --adminemail=admin@$siteFQDN --non-interactive --agree-license --allow-unstable || true
 
     #Tunnig
-    sudo touch /usr/lib/cgi-bin/php7.0.fcgi
+    sudo touch /usr/lib/cgi-bin/php5.fcgi
     sudo chown -R www-data:www-data /usr/lib/cgi-bin
 
     echo -e '<IfModule mod_fastcgi.c>
     AddHandler php5-fcgi .php
-    Action php5-fcgi /php7.0-fcgi
-    Alias /php7.0-fcgi /usr/lib/cgi-bin/php7.0-fcgi
-    FastCgiExternalServer /usr/lib/cgi-bin/php7.0-fcgi -socket /var/run/php5-fpm.sock -pass-header Authorization
+    Action php5-fcgi /php5-fcgi
+    Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
+    FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php5-fpm.sock -pass-header Authorization
     <Directory /usr/lib/cgi-bin>
         Require all granted
     </Directory>
-    </IfModule>' > /etc/apache2/conf-available/php7.0-fpm.conf
+    </IfModule>' > /etc/apache2/conf-available/php5-fpm.conf
 
     echo -e '<IfModule mod_deflate.c>
         <IfModule mod_filter.c>
@@ -242,7 +225,7 @@
     apc.rfc1867_freq=0
     apc.rfc1867_ttl=3600
     apc.lazy_classes=0
-    apc.lazy_functions=0' > /etc/php/7.0/mods-available/apcu.ini
+    apc.lazy_functions=0' > /etc/php5/mods-available/apcu.ini
 
     echo -e '; Determines if Zend OPCache is enabled
     opcache.enable=1
@@ -311,7 +294,7 @@
     ;opcache.preferred_memory_model=
     ; Protect the shared memory from unexpected writing during script execution.
     ; Useful for internal debugging only.
-    ;opcache.protect_memory=0' > /etc/php/7.0/mods-available/opcache.ini
+    ;opcache.protect_memory=0' > /etc/php5/mods-available/opcache.ini
 
     echo -e "[www]
     user = www-data
@@ -322,12 +305,12 @@
     listen.group = www-data
     listen.allowed_clients = 127.0.0.1
     pm = dynamic
-    pm.max_children = 25
+    pm.max_children = 5
     pm.start_servers = 2
     pm.min_spare_servers = 1
     pm.max_spare_servers = 3
     pm.max_requests = 5000
-    slowlog = /var/log/php7.0-fpm.slow
+    slowlog = /var/log/php5-fpm.slow
     request_slowlog_timeout = 20s
     rlimit_files = 50000
     rlimit_core = unlimited
@@ -346,11 +329,11 @@
     php_admin_value[error_log] = /var/log/fpm-php.www.log
     php_admin_flag[log_errors] = on
     php_value[session.save_handler] = files
-    php_value[session.save_path]    = /var/lib/php/session
-    php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache" > /etc/php5/fpm/pool.d/www.conf
+    php_value[session.save_path]    = /var/lib/php5/session
+    php_value[soap.wsdl_cache_dir]  = /var/lib/php5/wsdlcache" > /etc/php5/fpm/pool.d/www.conf
 
     # php config 
-    PhpIni=/etc/php/7.0/apache2/php.ini
+    PhpIni=/etc/php5/apache2/php.ini
     sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
     sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
     sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
@@ -367,7 +350,7 @@
     sed -i "s/^;realpath_cache_ttl = 120/realpath_cache_ttl = 3600/" $PhpIni
     sed -i "s/^max_execution_time = 30/max_execution_time = 120/" $PhpIni
 
-    PhpFpm=/etc/php/7.0/fpm/php-fpm.conf
+    PhpFpm=/etc/php5/fpm/php-fpm.conf
     sed -i "s/^;emergency_restart_threshold = 0/emergency_restart_threshold = 10/" $PhpFpm
     sed -i "s/^;emergency_restart_interval = 0/emergency_restart_interval = 1m/" $PhpFpm
     sed -i "s/^;process_control_timeout = 0/process_control_timeout = 10/" $PhpFpm
@@ -383,13 +366,13 @@
     sudo chmod 770 -R /moodle/
 
     sudo a2enmod actions fastcgi alias
-    sudo a2enconf php7.0-fpm
+    sudo a2enconf php5-fpm
 
-    pecl install channel://pecl.php.net/apcu-5.1.8
+    pecl install channel://pecl.php.net/apcu-4.0.7
 
     # restart Apache
     sudo service apache2 restart
-    sudo service php7.0-fpm restart
+    sudo service php5-fpm restart
 
     source /etc/apache2/envvars
 
