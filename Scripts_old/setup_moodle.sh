@@ -35,13 +35,13 @@ sudo apt-get -y --force-yes install glusterfs-client mysql-client git
 
 
 # install the LAMP stack
-sudo apt-get -y install apache2 php7.0
+sudo apt-get -y install apache2 php5
 
 # install moodle requirements
-sudo apt-get -y install graphviz aspell php7.0-pspell php7.0-curl php7.0-gd php7.0-intl php7.0-mysql php7.0-xmlrpc php7.0-ldap php-redis ghostscript php-memcached memcached php7.0-dev 
+sudo apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis ghostscript php5-memcached memcached php5-dev 
 
 # install modules for tunning
-sudo apt-get -y install libapache2-mod-fastcgi php7.0-fpm php7.0-apcu
+sudo apt-get -y install libapache2-mod-fastcgi php5-fpm php5-apcu
 
 # create gluster mount point
 sudo mkdir -p /moodle
@@ -88,18 +88,18 @@ echo -e '
 </VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
 
 #Tunnig
-sudo touch /usr/lib/cgi-bin/php7.0.fcgi
+sudo touch /usr/lib/cgi-bin/php5.fcgi
 sudo chown -R www-data:www-data /usr/lib/cgi-bin
 
 echo -e '<IfModule mod_fastcgi.c>
 AddHandler php5-fcgi .php
-Action php5-fcgi /php7.0-fcgi
-Alias /php7.0-fcgi /usr/lib/cgi-bin/php7.0-fcgi
-FastCgiExternalServer /usr/lib/cgi-bin/php7.0-fcgi -socket /var/run/php5-fpm.sock -pass-header Authorization
+Action php5-fcgi /php5-fcgi
+Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
+FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php5-fpm.sock -pass-header Authorization
 <Directory /usr/lib/cgi-bin>
     Require all granted
 </Directory>
-</IfModule>' > /etc/apache2/conf-available/php7.0-fpm.conf
+</IfModule>' > /etc/apache2/conf-available/php5-fpm.conf
 
 echo -e '<IfModule mod_deflate.c>
         <IfModule mod_filter.c>
@@ -163,7 +163,7 @@ apc.rfc1867_name=APC_UPLOAD_PROGRESS
 apc.rfc1867_freq=0
 apc.rfc1867_ttl=3600
 apc.lazy_classes=0
-apc.lazy_functions=0' > /etc/php/7.0/mods-available/apcu.ini
+apc.lazy_functions=0' > /etc/php5/mods-available/apcu.ini
 
 echo -e '; Determines if Zend OPCache is enabled
 opcache.enable=1
@@ -232,7 +232,7 @@ opcache.blacklist_filename=/etc/php.d/opcache*.blacklist
 ;opcache.preferred_memory_model=
 ; Protect the shared memory from unexpected writing during script execution.
 ; Useful for internal debugging only.
-;opcache.protect_memory=0' > /etc/php/7.0/mods-available/opcache.ini
+;opcache.protect_memory=0' > /etc/php5/mods-available/opcache.ini
 
 echo -e "[www]
 user = www-data
@@ -248,7 +248,7 @@ pm.start_servers = 2
 pm.min_spare_servers = 1
 pm.max_spare_servers = 3
 pm.max_requests = 5000
-slowlog = /var/log/php7.0-fpm.slow
+slowlog = /var/log/php5-fpm.slow
 request_slowlog_timeout = 20s
 rlimit_files = 50000
 rlimit_core = unlimited
@@ -267,13 +267,13 @@ env[NLS_TIMESTAMP_FORMAT] = 'DD/MM/YYYY HH24:MI:SS'
 php_admin_value[error_log] = /var/log/fpm-php.www.log
 php_admin_flag[log_errors] = on
 php_value[session.save_handler] = files
-php_value[session.save_path]    = /var/lib/php/session
-php_value[soap.wsdl_cache_dir]  = /var/lib/php/wsdlcache" > /etc/php/7.0/fpm/pool.d/www.conf
+php_value[session.save_path]    = /var/lib/php5/session
+php_value[soap.wsdl_cache_dir]  = /var/lib/php5/wsdlcache" > /etc/php5/fpm/pool.d/www.conf
 
 
 
 # php config 
-PhpIni=/etc/php/7.0/apache2/php.ini
+PhpIni=/etc/php5/apache2/php.ini
 sed -i "s/memory_limit.*/memory_limit = 512M/" $PhpIni
 sed -i "s/;opcache.use_cwd = 1/opcache.use_cwd = 1/" $PhpIni
 sed -i "s/;opcache.validate_timestamps = 1/opcache.validate_timestamps = 1/" $PhpIni
@@ -290,10 +290,10 @@ sed -i "s/^;realpath_cache_size = 16k/realpath_cache_size = 64K/" $PhpIni
 sed -i "s/^;realpath_cache_ttl = 120/realpath_cache_ttl = 3600/" $PhpIni
 sed -i "s/^max_execution_time = 30/max_execution_time = 120/" $PhpIni
 
-echo "zend_extension=/usr/lib/php/20121212/opcache.so" >> $PhpIni
-echo "extension=/usr/lib/php/20121212/apcu.so" >> $PhpIni
+echo "zend_extension=/usr/lib/php5/20121212/opcache.so" >> $PhpIni
+echo "extension=/usr/lib/php5/20121212/apcu.so" >> $PhpIni
 
-PhpFpm=/etc/php/7.0/fpm/php-fpm.conf
+PhpFpm=/etc/php5/fpm/php-fpm.conf
 sed -i "s/^;emergency_restart_threshold = 0/emergency_restart_threshold = 10/" $PhpFpm
 sed -i "s/^;emergency_restart_interval = 0/emergency_restart_interval = 1m/" $PhpFpm
 sed -i "s/^;process_control_timeout = 0/process_control_timeout = 10/" $PhpFpm
@@ -309,14 +309,12 @@ sudo chown -R www-data:azureadmin /moodle
 sudo chmod 770 -R /moodle/
 
 sudo a2enmod actions fastcgi alias
-sudo a2enconf php7.0-fpm
+sudo a2enconf php5-fpm
 
-pecl install channel://pecl.php.net/apcu-5.1.8
+pecl install channel://pecl.php.net/apcu-4.0.7
 
 source /etc/apache2/envvars
 
 # restart Apache
 sudo service apache2 restart
-sudo service php7.0-fpm restart
-
-echo -e "\n\rDone! Installation completed!\n\r"
+sudo service php5-fpm restart
