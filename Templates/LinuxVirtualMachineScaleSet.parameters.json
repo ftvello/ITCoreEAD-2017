@@ -12,7 +12,7 @@
       "value": "Standard_DS1_v2"
     },
       "moodleVersion": {
-          "value": "MOODLE_32_STABLE"
+          "value": "MOODLE_33_STABLE"
       },
       "mySQLuserPassword": {
           "value": "Ead2017@admin"
