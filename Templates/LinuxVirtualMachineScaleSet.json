@@ -141,7 +141,7 @@
           "count": "[variables('GfsScaleNumber')]"
         },
         "properties": {
-          "accountType": "Premium_LRS"
+          "accountType": "Standard_LRS"
         }
       },
         {
@@ -174,7 +174,7 @@
                 "displayName": "DatabaseStorageAccount"
             },
           "properties": {
-            "accountType": "Premium_LRS"
+            "accountType": "Standard_LRS"
           }
         },
         {
