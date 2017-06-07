@@ -38,7 +38,7 @@ sudo apt-get -y --force-yes install glusterfs-client mysql-client git
 sudo apt-get -y install apache2 php5
 
 # install moodle requirements
-sudo apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis
+sudo apt-get -y install graphviz aspell php5-pspell php5-curl php5-gd php5-intl php5-mysql php5-xmlrpc php5-ldap php5-redis ghostscript php5-memcached memcached php5-dev 
 
 # install modules for tunning
 sudo apt-get -y install libapache2-mod-fastcgi php5-fpm php5-apcu
@@ -79,8 +79,8 @@ echo -e '
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
         SSLEngine on
-        SSLCertificateFile /moodle/certs/fullchain.pem
-        SSLCertificateKeyFile /moodle/certs/privkey.pem
+        SSLCertificateFile /moodle/certs/apache.crt
+        SSLCertificateKeyFile /moodle/certs/apache.key
         BrowserMatch "MSIE [2-6]" \
                         nokeepalive ssl-unclean-shutdown \
                         downgrade-1.0 force-response-1.0
@@ -290,6 +290,9 @@ sed -i "s/^;realpath_cache_size = 16k/realpath_cache_size = 64K/" $PhpIni
 sed -i "s/^;realpath_cache_ttl = 120/realpath_cache_ttl = 3600/" $PhpIni
 sed -i "s/^max_execution_time = 30/max_execution_time = 120/" $PhpIni
 
+echo "zend_extension=/usr/lib/php5/20121212/opcache.so" >> $PhpIni
+echo "extension=/usr/lib/php5/20121212/apcu.so" >> $PhpIni
+
 PhpFpm=/etc/php5/fpm/php-fpm.conf
 sed -i "s/^;emergency_restart_threshold = 0/emergency_restart_threshold = 10/" $PhpFpm
 sed -i "s/^;emergency_restart_interval = 0/emergency_restart_interval = 1m/" $PhpFpm
@@ -307,6 +310,10 @@ sudo chmod 770 -R /moodle/
 
 sudo a2enmod actions fastcgi alias
 sudo a2enconf php5-fpm
+
+pecl install channel://pecl.php.net/apcu-4.0.7
+
+source /etc/apache2/envvars
 
 # restart Apache
 sudo service apache2 restart
