@@ -79,7 +79,7 @@
     "dbSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('SubnetDb'))]",
     "osImagePublisher": "Canonical",
     "osImageOffer": "UbuntuServer",
-    "osImageSKU": "16.04.0-LTS",
+    "osImageSKU": "14.04.4-LTS",
     "osImageVersion": "latest",
     "GlusterSetupCmd": "bash azuregfs.sh",
     "customScriptFilePath": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/gluster-file-system/azuregfs.sh",
@@ -112,7 +112,7 @@
     "osType": {
       "publisher": "Canonical",
       "offer": "UbuntuServer",
-      "sku": "16.04.0-LTS",
+      "sku": "14.04.4-LTS",
       "version": "latest"
     },
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses','webpip')]",
